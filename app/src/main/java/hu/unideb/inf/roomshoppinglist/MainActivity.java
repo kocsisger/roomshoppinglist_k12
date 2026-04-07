@@ -1,15 +1,21 @@
 package hu.unideb.inf.roomshoppinglist;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.room.Room;
+
+import hu.unideb.inf.roomshoppinglist.model.ShoppingListDatabase;
+import hu.unideb.inf.roomshoppinglist.model.ShoppingListItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    ShoppingListDatabase shoppingListDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,5 +27,16 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        shoppingListDatabase = Room.databaseBuilder(this, ShoppingListDatabase.class, "shoppinglist_db")
+                .fallbackToDestructiveMigration(true)
+                .build();
+
+        ShoppingListItem sli = new ShoppingListItem();
+        sli.setId(1);
+        sli.setName("Alma");
+        shoppingListDatabase.shoppingListDAO().insertListItem(sli);
+
+        Log.d("CheckDB", shoppingListDatabase.shoppingListDAO().getAllItems().toString());
     }
 }
