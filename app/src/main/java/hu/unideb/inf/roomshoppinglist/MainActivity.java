@@ -32,11 +32,17 @@ public class MainActivity extends AppCompatActivity {
                 .fallbackToDestructiveMigration(true)
                 .build();
 
-        ShoppingListItem sli = new ShoppingListItem();
-        sli.setId(1);
-        sli.setName("Alma");
-        shoppingListDatabase.shoppingListDAO().insertListItem(sli);
+        new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        ShoppingListItem sli = new ShoppingListItem();
+                        sli.setName("Alma");
+                        shoppingListDatabase.shoppingListDAO().insertListItem(sli);
 
-        Log.d("CheckDB", shoppingListDatabase.shoppingListDAO().getAllItems().toString());
+                        Log.d("CheckDB", shoppingListDatabase.shoppingListDAO().getAllItems().toString());
+                    }
+                }
+        ).start();
     }
 }
