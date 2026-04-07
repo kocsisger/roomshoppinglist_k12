@@ -44,17 +44,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void addItem(View view) {
         new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        ShoppingListItem sli = new ShoppingListItem();
-                        sli.setName(newItemEditText.getText().toString());
-                        shoppingListDatabase.shoppingListDAO().insertListItem(sli);
+                () -> {
+                    ShoppingListItem sli = new ShoppingListItem();
+                    sli.setName(newItemEditText.getText().toString());
+                    shoppingListDatabase.shoppingListDAO().insertListItem(sli);
 
-                        String list = shoppingListDatabase.shoppingListDAO().getAllItems().toString();
-                        Log.d("CheckDB", list);
-                        shoppingListTextView.setText(list);
-                    }
+                    String list = shoppingListDatabase.shoppingListDAO().getAllItems().toString();
+                    Log.d("CheckDB", list);
+
+                    runOnUiThread(() -> shoppingListTextView.setText(list));
                 }
         ).start();
     }
