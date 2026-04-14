@@ -56,4 +56,8 @@ public class MainActivity extends AppCompatActivity {
                 }
         ).start();
     }
+
+    public void clearDB(View view) {
+        new Thread(() -> shoppingListDatabase.shoppingListDAO().deleteDB()).start();
+    }
 }
