@@ -32,6 +32,10 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
     private List<ShoppingListItem> data;
 
+    public ShoppingListItem getDataItemAt(int position){
+        return data.get(position);
+    }
+
     @Override
     public int getItemCount() {
         return data.size();
@@ -42,6 +46,12 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = ItemLayoutBinding.bind(itemView);
+            itemView.setOnClickListener(view -> {
+                        //binding.itemNameTextView.setText("Done")
+                        data.get(getAbsoluteAdapterPosition()).setName("Done");
+                        notifyDataSetChanged();
+                    }
+            );
         }
 
         void setData(String itemName){

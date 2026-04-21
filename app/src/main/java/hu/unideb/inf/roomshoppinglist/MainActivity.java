@@ -7,11 +7,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import hu.unideb.inf.roomshoppinglist.databinding.ActivityMainBinding;
@@ -44,7 +47,28 @@ public class MainActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         shoppingListDatabase.shoppingListDAO().getAllItems().observe(this,
-                shoppingListItems -> binding.recyclerView.setAdapter(new ViewAdapter(shoppingListIte)));
+                shoppingListItems -> binding.recyclerView.setAdapter(new ViewAdapter(shoppingListItems)));
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                                                  ItemTouchHelper.LEFT + ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                ShoppingListItem sli = ((ViewAdapter)binding.recyclerView.getAdapter()).getDataItemAt(
+                        viewHolder.getAbsoluteAdapterPosition());
+
+                new Thread(
+                        () -> shoppingListDatabase.shoppingListDAO().deleteItem(sli)
+                ).start();
+            }
+        });
+
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView);
     }
 
     public void addItem(View view) {
